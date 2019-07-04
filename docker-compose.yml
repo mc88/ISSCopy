@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  sql.data:
+    image: microsoft/mssql-server-linux:2017-latest
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  pricingservice.web:
+    image: pricingservice.web
+    build:
+      context: .
+      dockerfile: PricingService.Web/Dockerfile
+    depends_on:
+      - sql.data
+  
+  policyservice.web:
+    image: policyservice.web
+    build:
+      context: .
+      dockerfile: PolicyService.Web/Dockerfile
+    depends_on:
+      - pricingservice.web
+      - sql.data
+      - rabbitmq
+
+  paymentservice.web:
+    image: paymentservice.web
+    build:
+      context: .
+      dockerfile: PaymentService.Web/Dockerfile
+    depends_on:
+      - sql.data
+      - rabbitmq
+
